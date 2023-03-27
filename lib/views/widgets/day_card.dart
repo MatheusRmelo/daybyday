@@ -4,14 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DayCard extends StatelessWidget {
-  const DayCard({super.key, required this.date, this.isActive = false});
+  const DayCard(
+      {super.key,
+      required this.date,
+      this.isActive = false,
+      required this.onPressed});
   final DateTime date;
   final bool isActive;
+  final Function onPressed;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () => onPressed(),
       child: Container(
         width: 80,
         margin: const EdgeInsets.only(right: 8),
