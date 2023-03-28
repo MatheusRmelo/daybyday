@@ -7,22 +7,18 @@ class Task {
   Category category;
 
   Task(
-      {required this.id,
+      {this.id = '',
       required this.name,
       required this.isComplete,
       required this.category});
 
-  Task.fromJson(Map<String, dynamic> json, {required String id})
-      : id = json['id'],
+  Task.fromJson(Map<String, dynamic> json, {required String doc})
+      : id = doc,
         name = json['name'],
         isComplete = json['is_complete'],
         category = Category.values
-            .firstWhere((element) => json['category'] == element);
+            .firstWhere((element) => json['category'] == element.name);
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'is_complete': isComplete,
-        'category': category.name
-      };
+  Map<String, dynamic> toJson() =>
+      {'name': name, 'is_complete': isComplete, 'category': category.name};
 }
