@@ -37,16 +37,14 @@ class _PlanningWeekPageState extends State<PlanningWeekPage> {
               Navigator.pop(context);
             },
           ),
+          title: Text(
+            "Tarefas da semana",
+            style: TextStyle(color: AppColors.textNormal),
+          ),
+          centerTitle: true,
         ),
         body: Column(
           children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              child: const Text(
-                "Tarefas da semana",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
             Expanded(
               child: ListView.builder(
                   itemCount: taskController.tasks.length,

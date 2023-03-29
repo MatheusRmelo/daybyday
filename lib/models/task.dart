@@ -31,12 +31,18 @@ class Task {
     if (data['day'] != null) {
       day = data['day'];
     }
+    if (data['is_complete'] != null) {
+      isComplete = data['is_complete'];
+    }
   }
 
-  Map<String, dynamic> toUpdate({DateTime? day}) {
+  Map<String, dynamic> toUpdate({DateTime? day, bool? isComplete}) {
     Map<String, dynamic> data = {};
     if (day != null) {
       data['day'] = AppDateFormat.toSave.format(day);
+    }
+    if (isComplete != null) {
+      data['is_complete'] = isComplete;
     }
     return data;
   }

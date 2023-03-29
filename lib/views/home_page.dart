@@ -4,6 +4,7 @@ import 'package:daybyday/models/day.dart';
 import 'package:daybyday/models/task.dart';
 import 'package:daybyday/utils/app_colors.dart';
 import 'package:daybyday/utils/app_routes.dart';
+import 'package:daybyday/utils/extensions/task_extension.dart';
 import 'package:daybyday/views/widgets/day_card.dart';
 import 'package:daybyday/views/widgets/notification_card.dart';
 import 'package:daybyday/views/widgets/task_card.dart';
@@ -118,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                 return Column(children: [
                   Container(
                     height: 100,
-                    margin: const EdgeInsets.only(top: 24),
+                    margin: const EdgeInsets.only(top: 24, bottom: 16),
                     child: ListView.builder(
                       itemCount: weekController.week!.days.length,
                       scrollDirection: Axis.horizontal,
@@ -136,9 +137,13 @@ class _HomePageState extends State<HomePage> {
                               child: CircularProgressIndicator(),
                             )
                           : ListView.builder(
-                              itemCount: taskController.tasks.length,
+                              itemCount: taskController.tasks
+                                  .getTasksInDay(
+                                      weekController.week!.days[_active])
+                                  .length,
                               itemBuilder: (context, index) => TaskCard(
-                                task: taskController.tasks[index],
+                                task: taskController.tasks.getTasksInDay(
+                                    weekController.week!.days[_active])[index],
                               ),
                             ))
                 ]);

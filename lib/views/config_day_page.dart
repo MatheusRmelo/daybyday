@@ -5,6 +5,7 @@ import 'package:daybyday/utils/app_colors.dart';
 import 'package:daybyday/utils/app_routes.dart';
 import 'package:daybyday/utils/extensions/date_extension.dart';
 import 'package:daybyday/utils/extensions/task_extension.dart';
+import 'package:daybyday/views/widgets/circle_icon_button.dart';
 import 'package:daybyday/views/widgets/custom_dropdown_textfield.dart';
 import 'package:daybyday/views/widgets/dialogs/is_planning_bottomsheet.dart';
 import 'package:daybyday/views/widgets/snackbars/error_snackbar.dart';
@@ -159,7 +160,27 @@ class _ConfigDayPageState extends State<ConfigDayPage> {
                       return ListTile(
                         key:
                             Key("task_${taskController.activeTasks[index].id}"),
-                        title: Text(taskController.activeTasks[index].name),
+                        leading: Container(
+                          width: 88,
+                          child: Row(children: [
+                            CircleIconButton(
+                                margin: EdgeInsets.zero,
+                                icon: Icons.edit,
+                                onPressed: () {}),
+                            CircleIconButton(
+                                margin: EdgeInsets.symmetric(horizontal: 4),
+                                icon: Icons.delete,
+                                onPressed: () {})
+                          ]),
+                        ),
+                        title: Text(
+                          taskController.activeTasks[index].name,
+                          style: TextStyle(
+                              decoration:
+                                  taskController.activeTasks[index].isComplete
+                                      ? TextDecoration.lineThrough
+                                      : TextDecoration.none),
+                        ),
                         trailing: const Icon(Icons.menu),
                       );
                     },
@@ -192,12 +213,16 @@ class _ConfigDayPageState extends State<ConfigDayPage> {
                         _failedToSave = false;
                       });
                       taskController.updatePriorities().then(((value) {
-                        setState(() => _isSaving = false);
+                        if (mounted) {
+                          setState(() => _isSaving = false);
+                        }
                       })).catchError((err) {
-                        setState(() {
-                          _isSaving = false;
-                          _failedToSave = true;
-                        });
+                        if (mounted) {
+                          setState(() {
+                            _isSaving = false;
+                            _failedToSave = true;
+                          });
+                        }
                         ScaffoldMessenger.of(context).showSnackBar(
                             ErrorSnackbar(content: Text(err.toString())));
                       });
