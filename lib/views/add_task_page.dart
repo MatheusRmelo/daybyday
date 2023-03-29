@@ -15,9 +15,24 @@ class AddTaskPage extends StatefulWidget {
 }
 
 class _AddTaskPageState extends State<AddTaskPage> {
-  DateTime _date = DateTime.now();
+  DateTime? _date;
   bool _isBusy = false;
   TextEditingController _textEditingController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    var controller = context.read<WeekController>();
+    if (controller.week != null) {
+      int index = controller.week!.days
+          .indexWhere((element) => element.isSameDay(DateTime.now()));
+      if (index == -1) {
+        _date = controller.week!.days.first;
+      } else {
+        _date = DateTime.now();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,18 +60,20 @@ class _AddTaskPageState extends State<AddTaskPage> {
               child: TextField(
                 controller: _textEditingController,
                 decoration: const InputDecoration.collapsed(
-                    hintText: 'Digite a tarefa'),
+                  hintText: 'Digite a tarefa',
+                ).copyWith(focusedBorder: InputBorder.none),
                 scrollPadding: const EdgeInsets.all(20.0),
                 autofocus: true,
                 style: const TextStyle(fontSize: 24),
               ),
             ),
             Consumer<WeekController>(builder: (context, controller, snapshot) {
+              if (controller.week == null || _date == null) return Container();
               return InkWell(
                 onTap: () {
                   showDatePicker(
                           context: context,
-                          initialDate: _date,
+                          initialDate: _date!,
                           firstDate: controller.week!.days.first,
                           lastDate: controller.week!.days.last)
                       .then((value) {
@@ -73,8 +90,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       borderRadius: BorderRadius.circular(32),
                       border: Border.all(color: AppColors.border)),
                   child: Text(
-                    "${_date.isToday ? 'Today' : DateFormat("EEEE").format(_date)}, ${DateFormat("d").format(_date)}",
-                    style: TextStyle(
+                    "${_date!.isToday ? 'Today' : DateFormat("EEEE").format(_date!)}, ${DateFormat("d").format(_date!)}",
+                    style: const TextStyle(
                       fontSize: 16,
                     ),
                   ),
@@ -97,7 +114,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                         color: AppColors.textLight,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 16,
                     ),
                     Text("Carregando...",
@@ -111,7 +128,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   setState(() => _isBusy = true);
                   context
                       .read<TaskController>()
-                      .store(_textEditingController.text)
+                      .store(_textEditingController.text, day: _date)
                       .then((value) {
                     Navigator.pop(context);
                   }).catchError((err) {

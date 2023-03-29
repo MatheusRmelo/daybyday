@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daybyday/models/category.dart';
 import 'package:daybyday/models/task.dart';
 import 'package:daybyday/models/week.dart';
+import 'package:daybyday/utils/formats/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -29,8 +30,8 @@ class WeekController extends ChangeNotifier {
 
   Future<Week> get({String? startAt, String? endAt}) async {
     if (startAt == null || endAt == null) {
-      startAt = DateFormat('yyyy-MM-dd').format(currentWeek.first);
-      endAt = DateFormat('yyyy-MM-dd').format(currentWeek.last);
+      startAt = AppDateFormat.toSave.format(currentWeek.first);
+      endAt = AppDateFormat.toSave.format(currentWeek.last);
     }
 
     var snapshots = await _weekCollection

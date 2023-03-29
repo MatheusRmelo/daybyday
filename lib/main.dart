@@ -6,6 +6,7 @@ import 'package:daybyday/utils/app_routes.dart';
 import 'package:daybyday/views/add_task_page.dart';
 import 'package:daybyday/views/config_day_page.dart';
 import 'package:daybyday/views/home_page.dart';
+import 'package:daybyday/views/planning_week_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -55,6 +56,12 @@ class MyApp extends StatelessWidget {
                   backgroundColor: AppColors.secondary,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8)))),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: AppColors.dominant,
+                  textStyle: TextStyle(color: AppColors.secondary),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)))),
           textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
             foregroundColor: AppColors.secondary,
@@ -63,7 +70,8 @@ class MyApp extends StatelessWidget {
       routes: {
         AppRoutes.home: (context) => const HomePage(),
         AppRoutes.addTask: (context) => const AddTaskPage(),
-        AppRoutes.configDay: (context) => const ConfigDayPage()
+        AppRoutes.configDay: (context) => const ConfigDayPage(),
+        AppRoutes.plannigWeek: (context) => const PlanningWeekPage(),
       },
     );
   }

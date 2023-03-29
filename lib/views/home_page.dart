@@ -1,6 +1,7 @@
 import 'package:daybyday/controllers/task_controller.dart';
 import 'package:daybyday/controllers/week_controller.dart';
 import 'package:daybyday/models/day.dart';
+import 'package:daybyday/models/task.dart';
 import 'package:daybyday/utils/app_colors.dart';
 import 'package:daybyday/utils/app_routes.dart';
 import 'package:daybyday/views/widgets/day_card.dart';
@@ -62,7 +63,7 @@ class _HomePageState extends State<HomePage> {
                     "${DateFormat("d 'de' MMMM").format(weekController.week!.days.first)} até ${DateFormat("d 'de' MMMM").format(weekController.week!.days.last)}",
                     style: TextStyle(fontSize: 16, color: AppColors.textNormal),
                   )
-                : Text('Carregando...'),
+                : const Text('Carregando...'),
             centerTitle: true,
             actions: [
               Padding(

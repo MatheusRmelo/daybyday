@@ -1,13 +1,19 @@
+import 'package:daybyday/utils/formats/date_format.dart';
+
 import 'category.dart';
 
 class Task {
   String id;
   String name;
+  String day;
+  int priority;
   bool isComplete;
   Category category;
 
   Task(
       {this.id = '',
+      this.day = '',
+      this.priority = 10,
       required this.name,
       required this.isComplete,
       required this.category});
@@ -15,10 +21,31 @@ class Task {
   Task.fromJson(Map<String, dynamic> json, {required String doc})
       : id = doc,
         name = json['name'],
+        priority = json['priority'] ?? 0,
         isComplete = json['is_complete'],
+        day = json['day'] ?? "",
         category = Category.values
             .firstWhere((element) => json['category'] == element.name);
 
-  Map<String, dynamic> toJson() =>
-      {'name': name, 'is_complete': isComplete, 'category': category.name};
+  void updateFields(Map<String, dynamic> data) {
+    if (data['day'] != null) {
+      day = data['day'];
+    }
+  }
+
+  Map<String, dynamic> toUpdate({DateTime? day}) {
+    Map<String, dynamic> data = {};
+    if (day != null) {
+      data['day'] = AppDateFormat.toSave.format(day);
+    }
+    return data;
+  }
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'day': day,
+        'priority': priority,
+        'is_complete': isComplete,
+        'category': category.name
+      };
 }
