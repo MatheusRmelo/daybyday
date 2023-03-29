@@ -2,14 +2,35 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daybyday/models/category.dart';
 import 'package:daybyday/models/task.dart';
 import 'package:daybyday/models/week.dart';
+import 'package:daybyday/utils/extensions/date_extension.dart';
+import 'package:daybyday/utils/extensions/task_extension.dart';
 import 'package:daybyday/utils/formats/date_format.dart';
 import 'package:flutter/material.dart';
 
 class TaskController extends ChangeNotifier {
   CollectionReference<Task>? _taskCollection;
+  DateTime _activeDay = DateTime.now();
+  List<Task> _activeTasks = [];
   List<Task> _tasks = [];
-
   List<Task> get tasks => _tasks;
+  List<Task> get activeTasks => _activeTasks;
+  DateTime get activeDay => _activeDay;
+
+  set activeDay(DateTime date) {
+    _activeDay = date;
+    _activeTasks = _tasks.getTasksInDays(date);
+    notifyListeners();
+  }
+
+  void initDay({required Week week}) {
+    int index = week.days.indexWhere((element) => element.isSameDay(activeDay));
+    if (index == -1) {
+      _activeDay = week.days.first;
+    } else {
+      _activeDay = DateTime.now();
+    }
+    _activeTasks = _tasks.getTasksInDays(_activeDay);
+  }
 
   void setCollection(Week week) {
     _taskCollection = FirebaseFirestore.instance
@@ -21,6 +42,13 @@ class TaskController extends ChangeNotifier {
                 Task.fromJson(snapshot.data()!, doc: snapshot.id),
             toFirestore: (value, options) => value.toJson());
     get();
+  }
+
+  void activeTasksByDay(DateTime day, {bool notify = true}) {
+    _activeTasks = tasks.getTasksInDays(day);
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   Future<void> get() async {
@@ -41,6 +69,7 @@ class TaskController extends ChangeNotifier {
     var snapshot = await reference.get();
     if (snapshot.data() != null) {
       _tasks.add(snapshot.data()!);
+      _activeTasks = _tasks.getTasksInDays(_activeDay);
       notifyListeners();
       return true;
     }
@@ -55,11 +84,12 @@ class TaskController extends ChangeNotifier {
     var data = task.toUpdate(day: day);
     await _taskCollection!.doc(task.id).update(data);
     _tasks[index].updateFields(data);
+    _activeTasks = _tasks.getTasksInDays(_activeDay);
     notifyListeners();
   }
 
-  Future<void> updatePriorities(List<Task> tasks) async {
-    for (int i = 0; i < tasks.length; i++) {
+  Future<void> updatePriorities() async {
+    for (int i = 0; i < _activeTasks.length; i++) {
       int index = _tasks.indexWhere((element) => element.id == tasks[i].id);
       if (index == -1) return;
       _tasks[index].priority = i;

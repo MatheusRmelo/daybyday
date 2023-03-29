@@ -20,22 +20,15 @@ class ConfigDayPage extends StatefulWidget {
 }
 
 class _ConfigDayPageState extends State<ConfigDayPage> {
-  DateTime activeDay = DateTime.now();
   Task? activeTask;
-  List<Task> _tasks = [];
   bool? _isSaving;
   bool _failedToSave = false;
   @override
   void initState() {
     super.initState();
-    var controller = context.read<WeekController>();
-    var taskController = context.read<TaskController>();
-    int index = controller.week!.days
-        .indexWhere((element) => element.isSameDay(activeDay));
-    if (index == -1) {
-      activeDay = controller.week!.days.first;
-    }
-    _tasks = taskController.tasks.getTasksInDays(activeDay);
+    context
+        .read<TaskController>()
+        .initDay(week: context.read<WeekController>().week!);
   }
 
   @override
@@ -79,20 +72,18 @@ class _ConfigDayPageState extends State<ConfigDayPage> {
                               margin: const EdgeInsets.only(right: 8),
                               child: GestureDetector(
                                 onTap: () {
-                                  setState(() {
-                                    activeDay = day;
-                                    _tasks = taskController.tasks
-                                        .getTasksInDays(day);
-                                  });
+                                  taskController.activeDay = day;
                                 },
                                 child: Chip(
-                                    backgroundColor: day.isSameDay(activeDay)
-                                        ? AppColors.highlight
-                                        : null,
+                                    backgroundColor:
+                                        day.isSameDay(taskController.activeDay)
+                                            ? AppColors.highlight
+                                            : null,
                                     label: Text(
                                       DateFormat.EEEE().format(day),
                                       style: TextStyle(
-                                          color: day.isSameDay(activeDay)
+                                          color: day.isSameDay(
+                                                  taskController.activeDay)
                                               ? AppColors.textLight
                                               : AppColors.textNormal),
                                     )),
@@ -109,8 +100,8 @@ class _ConfigDayPageState extends State<ConfigDayPage> {
                         int index = taskController.tasks.notAlocatedTasks
                             .indexWhere((element) => element.name == value);
                         if (index >= 0) {
-                          setState(
-                              () => activeTask = taskController.tasks[index]);
+                          setState(() => activeTask =
+                              taskController.tasks.notAlocatedTasks[index]);
                         }
                       }
                     }),
@@ -128,12 +119,14 @@ class _ConfigDayPageState extends State<ConfigDayPage> {
                         Task task = activeTask ??
                             taskController.tasks.notAlocatedTasks.first;
                         taskController
-                            .update(task, day: activeDay)
+                            .update(task, day: taskController.activeDay)
                             .then((value) {
-                          activeTask =
-                              taskController.tasks.notAlocatedTasks.isEmpty
-                                  ? null
-                                  : taskController.tasks.notAlocatedTasks.first;
+                          setState(() {
+                            activeTask = taskController
+                                    .tasks.notAlocatedTasks.isEmpty
+                                ? null
+                                : taskController.tasks.notAlocatedTasks.first;
+                          });
                         });
                       }),
                 ),
@@ -141,7 +134,7 @@ class _ConfigDayPageState extends State<ConfigDayPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Tarefas da ${DateFormat.EEEE().format(activeDay)}",
+                    "Tarefas da ${DateFormat.EEEE().format(taskController.activeDay)}",
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
@@ -164,38 +157,41 @@ class _ConfigDayPageState extends State<ConfigDayPage> {
                 child: ReorderableListView.builder(
                     itemBuilder: (context, index) {
                       return ListTile(
-                        key: Key("task_${_tasks[index].id}"),
-                        title: Text("${_tasks[index].name}"),
+                        key:
+                            Key("task_${taskController.activeTasks[index].id}"),
+                        title: Text(taskController.activeTasks[index].name),
                         trailing: const Icon(Icons.menu),
                       );
                     },
-                    itemCount: _tasks.length,
+                    itemCount: taskController.activeTasks.length,
                     onReorder: (int start, int current) {
                       // dragging from top to bottom
                       if (start < current) {
                         int end = current - 1;
-                        Task startItem = _tasks[start];
+                        Task startItem = taskController.activeTasks[start];
                         int i = 0;
                         int local = start;
                         do {
-                          _tasks[local] = _tasks[++local];
+                          taskController.activeTasks[local] =
+                              taskController.activeTasks[++local];
                           i++;
                         } while (i < end - start);
-                        _tasks[end] = startItem;
+                        taskController.activeTasks[end] = startItem;
                       }
                       // dragging from bottom to top
                       else if (start > current) {
-                        Task startItem = _tasks[start];
+                        Task startItem = taskController.activeTasks[start];
                         for (int i = start; i > current; i--) {
-                          _tasks[i] = _tasks[i - 1];
+                          taskController.activeTasks[i] =
+                              taskController.activeTasks[i - 1];
                         }
-                        _tasks[current] = startItem;
+                        taskController.activeTasks[current] = startItem;
                       }
                       setState(() {
                         _isSaving = true;
                         _failedToSave = false;
                       });
-                      taskController.updatePriorities(_tasks).then(((value) {
+                      taskController.updatePriorities().then(((value) {
                         setState(() => _isSaving = false);
                       })).catchError((err) {
                         setState(() {

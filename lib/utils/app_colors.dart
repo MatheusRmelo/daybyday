@@ -9,4 +9,5 @@ class AppColors {
   static Color textNormal = Colors.black;
   static Color border = const Color(0xFFC4C4C4);
   static Color error = Colors.red;
+  static Color success = Colors.green;
 }
