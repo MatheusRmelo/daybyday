@@ -7,6 +7,7 @@ import 'package:daybyday/utils/extensions/date_extension.dart';
 import 'package:daybyday/utils/extensions/task_extension.dart';
 import 'package:daybyday/views/widgets/circle_icon_button.dart';
 import 'package:daybyday/views/widgets/custom_dropdown_textfield.dart';
+import 'package:daybyday/views/widgets/dialogs/delete_dialog.dart';
 import 'package:daybyday/views/widgets/dialogs/is_planning_bottomsheet.dart';
 import 'package:daybyday/views/widgets/snackbars/error_snackbar.dart';
 import 'package:flutter/material.dart';
@@ -166,11 +167,24 @@ class _ConfigDayPageState extends State<ConfigDayPage> {
                             CircleIconButton(
                                 margin: EdgeInsets.zero,
                                 icon: Icons.edit,
-                                onPressed: () {}),
+                                onPressed: () {
+                                  taskController.task =
+                                      taskController.activeTasks[index];
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.formTask);
+                                }),
                             CircleIconButton(
-                                margin: EdgeInsets.symmetric(horizontal: 4),
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 4),
                                 icon: Icons.delete,
-                                onPressed: () {})
+                                onPressed: () {
+                                  showDeleteDialog(context, "Ação crítica",
+                                      "Excluir a tarefa ${taskController.activeTasks[index].name} é uma ação irreversível",
+                                      () {
+                                    taskController.destroy(
+                                        taskController.activeTasks[index]);
+                                  });
+                                })
                           ]),
                         ),
                         title: Text(

@@ -28,6 +28,9 @@ class Task {
             .firstWhere((element) => json['category'] == element.name);
 
   void updateFields(Map<String, dynamic> data) {
+    if (data['name'] != null) {
+      name = data['name'];
+    }
     if (data['day'] != null) {
       day = data['day'];
     }
@@ -36,8 +39,12 @@ class Task {
     }
   }
 
-  Map<String, dynamic> toUpdate({DateTime? day, bool? isComplete}) {
+  Map<String, dynamic> toUpdate(
+      {String? name, DateTime? day, bool? isComplete}) {
     Map<String, dynamic> data = {};
+    if (name != null) {
+      data['name'] = name;
+    }
     if (day != null) {
       data['day'] = AppDateFormat.toSave.format(day);
     }

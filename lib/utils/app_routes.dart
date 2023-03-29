@@ -1,6 +1,6 @@
 class AppRoutes {
   static String home = '/';
-  static String addTask = '/add_task';
+  static String formTask = '/form_task';
   static String configDay = '/config_day';
   static String plannigWeek = '/plannig_week';
 }

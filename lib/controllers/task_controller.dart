@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 class TaskController extends ChangeNotifier {
   CollectionReference<Task>? _taskCollection;
   DateTime _activeDay = DateTime.now();
+  Task? task;
   List<Task> _activeTasks = [];
   List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
@@ -76,7 +77,8 @@ class TaskController extends ChangeNotifier {
     return false;
   }
 
-  Future<void> update(Task task, {DateTime? day, bool? isComplete}) async {
+  Future<void> update(Task task,
+      {String? name, DateTime? day, bool? isComplete}) async {
     if (_taskCollection == null) return;
     int index = _tasks.indexWhere((element) => element.id == task.id);
     if (index == -1) return;
@@ -84,6 +86,16 @@ class TaskController extends ChangeNotifier {
     var data = task.toUpdate(day: day, isComplete: isComplete);
     await _taskCollection!.doc(task.id).update(data);
     _tasks[index].updateFields(data);
+    _activeTasks = _tasks.getTasksInDay(_activeDay);
+    notifyListeners();
+  }
+
+  Future<void> destroy(Task task) async {
+    if (_taskCollection == null) return;
+    int index = _tasks.indexWhere((element) => element.id == task.id);
+    if (index == -1) return;
+    await _taskCollection!.doc(task.id).delete();
+    _tasks.removeAt(index);
     _activeTasks = _tasks.getTasksInDay(_activeDay);
     notifyListeners();
   }

@@ -101,7 +101,8 @@ class _HomePageState extends State<HomePage> {
                         height: 48,
                         child: ElevatedButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.addTask);
+                              taskController.task = null;
+                              Navigator.pushNamed(context, AppRoutes.formTask);
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,

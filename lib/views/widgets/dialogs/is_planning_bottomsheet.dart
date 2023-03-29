@@ -1,6 +1,8 @@
+import 'package:daybyday/controllers/task_controller.dart';
 import 'package:daybyday/utils/app_colors.dart';
 import 'package:daybyday/utils/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void isPlanningBottomSheet(BuildContext context) {
   showModalBottomSheet(
@@ -39,7 +41,8 @@ void isPlanningBottomSheet(BuildContext context) {
                 child: OutlinedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      Navigator.pushNamed(context, AppRoutes.addTask);
+                      context.read<TaskController>().task = null;
+                      Navigator.pushNamed(context, AppRoutes.formTask);
                     },
                     child: Text(
                       "Criar uma nova tarefa",

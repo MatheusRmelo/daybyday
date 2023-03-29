@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Future<String?> addTaskDialog(BuildContext context) async {
+Future<String?> addTaskBottomSheet(BuildContext context) async {
   TextEditingController controller = TextEditingController(text: "");
   final formGlobalKey = GlobalKey<FormState>();
 

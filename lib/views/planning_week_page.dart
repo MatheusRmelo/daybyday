@@ -1,6 +1,6 @@
 import 'package:daybyday/controllers/task_controller.dart';
 import 'package:daybyday/utils/app_colors.dart';
-import 'package:daybyday/views/widgets/dialogs/add_task_dialog.dart';
+import 'package:daybyday/views/widgets/dialogs/add_task_bottomsheet.dart';
 import 'package:daybyday/views/widgets/snackbars/error_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -79,7 +79,7 @@ class _PlanningWeekPageState extends State<PlanningWeekPage> {
             onPressed: _isBusy
                 ? null
                 : () async {
-                    String? value = await addTaskDialog(context);
+                    String? value = await addTaskBottomSheet(context);
                     if (value != null && value.isNotEmpty) {
                       setState(() => _isBusy = true);
                       taskController.store(value).then((value) {

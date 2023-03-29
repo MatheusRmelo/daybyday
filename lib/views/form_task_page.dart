@@ -1,29 +1,37 @@
 import 'package:daybyday/controllers/task_controller.dart';
 import 'package:daybyday/controllers/week_controller.dart';
+import 'package:daybyday/models/task.dart';
 import 'package:daybyday/utils/app_colors.dart';
 import 'package:daybyday/utils/extensions/date_extension.dart';
+import 'package:daybyday/utils/formats/date_format.dart';
 import 'package:daybyday/views/widgets/circle_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({super.key});
+class FormTaskPage extends StatefulWidget {
+  const FormTaskPage({super.key});
 
   @override
-  State<AddTaskPage> createState() => _AddTaskPageState();
+  State<FormTaskPage> createState() => _FormTaskPageState();
 }
 
-class _AddTaskPageState extends State<AddTaskPage> {
+class _FormTaskPageState extends State<FormTaskPage> {
   DateTime? _date;
   bool _isBusy = false;
-  TextEditingController _textEditingController = TextEditingController();
+  bool _isEditing = false;
+  final TextEditingController _textEditingController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     var controller = context.read<WeekController>();
-    if (controller.week != null) {
+    Task? task = context.read<TaskController>().task;
+    _isEditing = task != null;
+    if (task != null) {
+      _textEditingController.text = task.name;
+      _date = DateTime.parse(task.day);
+    } else if (controller.week != null) {
       int index = controller.week!.days
           .indexWhere((element) => element.isSameDay(DateTime.now()));
       if (index == -1) {
@@ -120,24 +128,42 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     Text("Carregando...",
                         style: TextStyle(color: AppColors.textLight))
                   ]
-                : const [Icon(Icons.add), Text("Adicionar")],
+                : [
+                    Icon(_isEditing ? Icons.save : Icons.add),
+                    Text(_isEditing ? "Editar" : "Adicionar")
+                  ],
           ),
           onPressed: _isBusy
               ? null
               : () {
+                  var taskController = context.read<TaskController>();
                   setState(() => _isBusy = true);
-                  context
-                      .read<TaskController>()
-                      .store(_textEditingController.text, day: _date)
-                      .then((value) {
-                    Navigator.pop(context);
-                  }).catchError((err) {
-                    setState(() => _isBusy = false);
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(err.toString()),
-                      backgroundColor: AppColors.error,
-                    ));
-                  });
+                  if (_isEditing) {
+                    taskController
+                        .update(taskController.task!,
+                            day: _date, name: _textEditingController.text)
+                        .then((value) {
+                      Navigator.pop(context);
+                    }).catchError((err) {
+                      setState(() => _isBusy = false);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(err.toString()),
+                        backgroundColor: AppColors.error,
+                      ));
+                    });
+                  } else {
+                    taskController
+                        .store(_textEditingController.text, day: _date)
+                        .then((value) {
+                      Navigator.pop(context);
+                    }).catchError((err) {
+                      setState(() => _isBusy = false);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(err.toString()),
+                        backgroundColor: AppColors.error,
+                      ));
+                    });
+                  }
                 }),
     );
   }
