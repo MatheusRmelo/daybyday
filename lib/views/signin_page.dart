@@ -74,9 +74,27 @@ class _SignInPageState extends State<SignInPage> {
                 error: controller.errors.getErrorWithCode('password'),
               ),
               Container(
+                margin: const EdgeInsets.only(top: 4),
+                height: 32,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                              context, AppRoutes.recoveryPassword);
+                        },
+                        child: const Text(
+                          "Esqueci minha senha",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )),
+                  ],
+                ),
+              ),
+              Container(
                 width: double.infinity,
                 height: 48,
-                margin: const EdgeInsets.only(top: 24),
+                margin: const EdgeInsets.only(top: 16),
                 child: ElevatedButton(
                     onPressed: _isLoading
                         ? null
@@ -90,6 +108,13 @@ class _SignInPageState extends State<SignInPage> {
                               if (value.isEmpty) {
                                 Navigator.pushNamedAndRemoveUntil(
                                     context, AppRoutes.home, (route) => false);
+                                return;
+                              }
+                              if (value.getErrorWithCode('general') != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    ErrorSnackbar(
+                                        content: Text(value
+                                            .getErrorWithCode('general')!)));
                               }
                               setState(() => _isLoading = false);
                             }).catchError((err) {
@@ -123,7 +148,29 @@ class _SignInPageState extends State<SignInPage> {
                 height: 48,
                 margin: const EdgeInsets.only(top: 24),
                 child: OutlinedButton(
-                    onPressed: _isLoading ? null : () {},
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            setState(() => _isLoading = true);
+                            controller.signInWithGoogle().then((value) {
+                              if (value.isEmpty) {
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context, AppRoutes.home, (route) => false);
+                                return;
+                              }
+                              if (value.getErrorWithCode('general') != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    ErrorSnackbar(
+                                        content: Text(value
+                                            .getErrorWithCode('general')!)));
+                              }
+                              setState(() => _isLoading = false);
+                            }).catchError((err) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  ErrorSnackbar(content: Text(err.toString())));
+                              setState(() => _isLoading = false);
+                            });
+                          },
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -160,6 +207,7 @@ class _SignInPageState extends State<SignInPage> {
                 margin: const EdgeInsets.only(top: 16),
                 child: TextButton(
                     onPressed: () {
+                      controller.cleanErrors();
                       Navigator.pushNamed(context, AppRoutes.signUp);
                     },
                     child: const Text(

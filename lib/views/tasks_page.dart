@@ -173,7 +173,7 @@ class _TaskPageState extends State<TaskPage> {
                                                 margin: const EdgeInsets.only(
                                                     right: 8),
                                                 child: const Icon(Icons.add)),
-                                            const Text("Alocar dias"),
+                                            const Text("Alocar tarefas"),
                                           ],
                                         )),
                                   )

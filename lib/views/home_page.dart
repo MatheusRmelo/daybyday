@@ -36,8 +36,10 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, AppRoutes.signIn, (route) => false);
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, AppRoutes.signIn, (route) => false);
+        }
       }
     });
   }

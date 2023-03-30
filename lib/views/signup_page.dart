@@ -116,6 +116,13 @@ class _SignUpPageState extends State<SignUpPage> {
                               if (value.isEmpty) {
                                 Navigator.pushNamedAndRemoveUntil(
                                     context, AppRoutes.home, (route) => false);
+                                return;
+                              }
+                              if (value.getErrorWithCode('general') != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    ErrorSnackbar(
+                                        content: Text(value
+                                            .getErrorWithCode('general')!)));
                               }
                               setState(() => _isLoading = false);
                             }).catchError((err) {
@@ -149,7 +156,33 @@ class _SignUpPageState extends State<SignUpPage> {
                 height: 48,
                 margin: const EdgeInsets.only(top: 24),
                 child: OutlinedButton(
-                    onPressed: _isLoading ? null : () {},
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            setState(() => _isLoading = true);
+                            controller
+                                .signInWithEmailAndPassword(
+                                    email: _emailController.text,
+                                    password: _passwordController.text)
+                                .then((value) {
+                              if (value.isEmpty) {
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context, AppRoutes.home, (route) => false);
+                                return;
+                              }
+                              if (value.getErrorWithCode('general') != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    ErrorSnackbar(
+                                        content: Text(value
+                                            .getErrorWithCode('general')!)));
+                              }
+                              setState(() => _isLoading = false);
+                            }).catchError((err) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  ErrorSnackbar(content: Text(err.toString())));
+                              setState(() => _isLoading = false);
+                            });
+                          },
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
