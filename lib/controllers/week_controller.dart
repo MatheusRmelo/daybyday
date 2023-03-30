@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:daybyday/controllers/task_controller.dart';
 import 'package:daybyday/models/category.dart';
 import 'package:daybyday/models/task.dart';
 import 'package:daybyday/models/week.dart';
+import 'package:daybyday/utils/extensions/week_extension.dart';
 import 'package:daybyday/utils/formats/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class WeekController extends ChangeNotifier {
   final String mockUID = 'teste';
@@ -14,10 +17,10 @@ class WeekController extends ChangeNotifier {
           fromFirestore: (snapshot, options) =>
               Week.fromJson(snapshot.data()!, doc: snapshot.id),
           toFirestore: (value, options) => value.toJson());
+  DateTime _activeDay = DateTime.now();
   Week? _week;
-
   Week? get week => _week;
-
+  DateTime get activeDay => _activeDay;
   List<DateTime> get currentWeek {
     DateTime today = DateTime.now();
     List<DateTime> days = [];
@@ -28,7 +31,13 @@ class WeekController extends ChangeNotifier {
     return days;
   }
 
-  Future<Week> get({String? startAt, String? endAt}) async {
+  set activeDay(DateTime date) {
+    _activeDay = date;
+    notifyListeners();
+  }
+
+  Future<Week> get(BuildContext context,
+      {String? startAt, String? endAt}) async {
     if (startAt == null || endAt == null) {
       startAt = AppDateFormat.toSave.format(currentWeek.first);
       endAt = AppDateFormat.toSave.format(currentWeek.last);
@@ -46,7 +55,10 @@ class WeekController extends ChangeNotifier {
           .add(Week(uid: mockUID, startAt: startAt, endAt: endAt));
       _week = (await reference.get()).data();
     }
+    _activeDay = week!.initDay;
     notifyListeners();
+    // ignore: use_build_context_synchronously
+    context.read<TaskController>().setCollection(_week!);
     return _week!;
   }
 }

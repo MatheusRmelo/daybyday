@@ -3,6 +3,7 @@ import 'package:daybyday/controllers/week_controller.dart';
 import 'package:daybyday/firebase_options.dart';
 import 'package:daybyday/utils/app_colors.dart';
 import 'package:daybyday/utils/app_routes.dart';
+import 'package:daybyday/views/select_week_page.dart';
 import 'package:daybyday/views/form_task_page.dart';
 import 'package:daybyday/views/config_day_page.dart';
 import 'package:daybyday/views/home_page.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
       initialRoute: AppRoutes.home,
       routes: {
         AppRoutes.home: (context) => const HomePage(),
+        AppRoutes.selectWeek: (context) => const SelectWeekPage(),
         AppRoutes.formTask: (context) => const FormTaskPage(),
         AppRoutes.configDay: (context) => const ConfigDayPage(),
         AppRoutes.plannigWeek: (context) => const PlanningWeekPage(),

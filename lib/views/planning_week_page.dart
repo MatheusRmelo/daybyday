@@ -1,5 +1,6 @@
 import 'package:daybyday/controllers/task_controller.dart';
 import 'package:daybyday/utils/app_colors.dart';
+import 'package:daybyday/utils/app_routes.dart';
 import 'package:daybyday/views/widgets/dialogs/add_task_bottomsheet.dart';
 import 'package:daybyday/views/widgets/snackbars/error_snackbar.dart';
 import 'package:flutter/material.dart';
@@ -43,35 +44,80 @@ class _PlanningWeekPageState extends State<PlanningWeekPage> {
           ),
           centerTitle: true,
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                  itemCount: taskController.tasks.length,
-                  itemBuilder: ((context, index) => ListTile(
-                        leading: taskController.tasks[index].isComplete
-                            ? Icon(
-                                Icons.check_circle,
-                                color: AppColors.success,
-                              )
-                            : Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: AppColors.border),
-                                    borderRadius: BorderRadius.circular(12)),
-                              ),
-                        title: Text(taskController.tasks[index].name),
-                        trailing: taskController.tasks[index].day.isEmpty
-                            ? null
-                            : Chip(
-                                label: Text(DateFormat.EEEE().format(
-                                    DateTime.parse(
-                                        taskController.tasks[index].day)))),
-                      ))),
-            )
-          ],
-        ),
+        body: taskController.tasks.isEmpty
+            ? Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Cadastre sua primeira atividade",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      height: 48,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            String? value = await addTaskBottomSheet(context);
+                            if (value != null && value.isNotEmpty) {
+                              setState(() => _isBusy = true);
+                              taskController.store(value).then((value) {
+                                setState(() => _isBusy = false);
+                              }).catchError((err) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    ErrorSnackbar(
+                                        content: Text(err.toString())));
+                                setState(() => _isBusy = false);
+                              });
+                            }
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                  margin: const EdgeInsets.only(right: 8),
+                                  child: const Icon(Icons.add)),
+                              const Text("Cadastrar tarefa"),
+                            ],
+                          )),
+                    )
+                  ],
+                ),
+              )
+            : Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: taskController.tasks.length,
+                        itemBuilder: ((context, index) => ListTile(
+                              leading: taskController.tasks[index].isComplete
+                                  ? Icon(
+                                      Icons.check_circle,
+                                      color: AppColors.success,
+                                    )
+                                  : Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: AppColors.border),
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
+                                    ),
+                              title: Text(taskController.tasks[index].name),
+                              trailing: taskController.tasks[index].day.isEmpty
+                                  ? null
+                                  : Chip(
+                                      label: Text(DateFormat.EEEE().format(
+                                          DateTime.parse(taskController
+                                              .tasks[index].day)))),
+                            ))),
+                  )
+                ],
+              ),
         floatingActionButton: FloatingActionButton(
             backgroundColor: _isBusy
                 ? AppColors.secondary.withOpacity(0.2)

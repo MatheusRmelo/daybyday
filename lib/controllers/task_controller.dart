@@ -4,6 +4,7 @@ import 'package:daybyday/models/task.dart';
 import 'package:daybyday/models/week.dart';
 import 'package:daybyday/utils/extensions/date_extension.dart';
 import 'package:daybyday/utils/extensions/task_extension.dart';
+import 'package:daybyday/utils/extensions/week_extension.dart';
 import 'package:daybyday/utils/formats/date_format.dart';
 import 'package:flutter/material.dart';
 
@@ -24,16 +25,11 @@ class TaskController extends ChangeNotifier {
   }
 
   void initDay({required Week week}) {
-    int index = week.days.indexWhere((element) => element.isSameDay(activeDay));
-    if (index == -1) {
-      _activeDay = week.days.first;
-    } else {
-      _activeDay = DateTime.now();
-    }
+    _activeDay = week.initDay;
     _activeTasks = _tasks.getTasksInDay(_activeDay);
   }
 
-  void setCollection(Week week) {
+  Future<void> setCollection(Week week) async {
     _taskCollection = FirebaseFirestore.instance
         .collection('weeks')
         .doc(week.id)
@@ -42,7 +38,7 @@ class TaskController extends ChangeNotifier {
             fromFirestore: (snapshot, options) =>
                 Task.fromJson(snapshot.data()!, doc: snapshot.id),
             toFirestore: (value, options) => value.toJson());
-    get();
+    await get();
   }
 
   void activeTasksByDay(DateTime day, {bool notify = true}) {
