@@ -1,3 +1,4 @@
+import 'package:daybyday/controllers/auth_controller.dart';
 import 'package:daybyday/controllers/task_controller.dart';
 import 'package:daybyday/controllers/week_controller.dart';
 import 'package:daybyday/firebase_options.dart';
@@ -8,6 +9,8 @@ import 'package:daybyday/views/form_task_page.dart';
 import 'package:daybyday/views/config_day_page.dart';
 import 'package:daybyday/views/home_page.dart';
 import 'package:daybyday/views/planning_week_page.dart';
+import 'package:daybyday/views/signin_page.dart';
+import 'package:daybyday/views/signup_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +23,7 @@ void main() async {
   );
   runApp(MultiProvider(
     providers: [
+      ChangeNotifierProvider(create: (_) => AuthController()),
       ChangeNotifierProvider(create: (_) => WeekController()),
       ChangeNotifierProvider(create: (_) => TaskController()),
     ],
@@ -38,12 +42,13 @@ class MyApp extends StatelessWidget {
           appBarTheme: AppBarTheme(backgroundColor: AppColors.secondary),
           scaffoldBackgroundColor: AppColors.dominant,
           inputDecorationTheme: InputDecorationTheme(
+            prefixIconColor: AppColors.secondary,
             contentPadding: const EdgeInsets.all(8),
             errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: AppColors.error),
                 borderRadius: BorderRadius.circular(8)),
             focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: AppColors.secondary),
+                borderSide: BorderSide(color: AppColors.highlight),
                 borderRadius: BorderRadius.circular(8)),
             border: OutlineInputBorder(
                 borderSide: const BorderSide(style: BorderStyle.none, width: 0),
@@ -70,6 +75,8 @@ class MyApp extends StatelessWidget {
       initialRoute: AppRoutes.home,
       routes: {
         AppRoutes.home: (context) => const HomePage(),
+        AppRoutes.signIn: (context) => const SignInPage(),
+        AppRoutes.signUp: (context) => const SignUpPage(),
         AppRoutes.selectWeek: (context) => const SelectWeekPage(),
         AppRoutes.formTask: (context) => const FormTaskPage(),
         AppRoutes.configDay: (context) => const ConfigDayPage(),
