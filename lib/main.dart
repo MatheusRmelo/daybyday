@@ -12,6 +12,7 @@ import 'package:daybyday/views/home_page.dart';
 import 'package:daybyday/views/planning_week_page.dart';
 import 'package:daybyday/views/signin_page.dart';
 import 'package:daybyday/views/signup_page.dart';
+import 'package:daybyday/views/splash_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Day By Day',
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -80,8 +81,9 @@ class MyApp extends StatelessWidget {
               style: TextButton.styleFrom(
             foregroundColor: AppColors.secondary,
           ))),
-      initialRoute: AppRoutes.home,
+      initialRoute: AppRoutes.splash,
       routes: {
+        AppRoutes.splash: (context) => const SplashPage(),
         AppRoutes.home: (context) => const HomePage(),
         AppRoutes.signIn: (context) => const SignInPage(),
         AppRoutes.signUp: (context) => const SignUpPage(),

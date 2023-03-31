@@ -1,5 +1,6 @@
 class AppRoutes {
-  static String home = '/';
+  static String splash = "/";
+  static String home = '/home';
   static String signIn = '/sign_in';
   static String signUp = '/sign_up';
   static String recoveryPassword = '/recovery_password';

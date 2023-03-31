@@ -34,7 +34,7 @@ class _SplashPageState extends State<SplashPage> {
       body: Center(
           child: SizedBox(
         width: size.width * 0.6,
-        child: Image.asset('assets/images/logo.png'),
+        child: Image.asset('assets/icon/icon.png'),
       )),
     );
   }
