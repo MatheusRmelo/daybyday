@@ -51,6 +51,9 @@ class _SignInPageState extends State<SignInPage> {
                 prefixIcon: const Icon(Icons.email),
                 placeholder: 'Digite o seu e-mail',
                 controller: _emailController,
+                onChanged: (value) {
+                  setState(() {});
+                },
                 error: controller.errors.getErrorWithCode('email'),
               ),
               const SizedBox(
@@ -71,6 +74,9 @@ class _SignInPageState extends State<SignInPage> {
                 label: 'Senha',
                 placeholder: "Digite a sua senha",
                 controller: _passwordController,
+                onChanged: (value) {
+                  setState(() {});
+                },
                 error: controller.errors.getErrorWithCode('password'),
               ),
               Container(
@@ -96,7 +102,9 @@ class _SignInPageState extends State<SignInPage> {
                 height: 48,
                 margin: const EdgeInsets.only(top: 16),
                 child: ElevatedButton(
-                    onPressed: _isLoading
+                    onPressed: _isLoading ||
+                            _emailController.text.isEmpty ||
+                            _passwordController.text.isEmpty
                         ? null
                         : () {
                             setState(() => _isLoading = true);

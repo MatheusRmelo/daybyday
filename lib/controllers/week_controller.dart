@@ -1,16 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daybyday/controllers/task_controller.dart';
-import 'package:daybyday/models/category.dart';
-import 'package:daybyday/models/task.dart';
 import 'package:daybyday/models/week.dart';
 import 'package:daybyday/utils/extensions/week_extension.dart';
 import 'package:daybyday/utils/formats/date_format.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class WeekController extends ChangeNotifier {
-  final String mockUID = 'teste';
   final CollectionReference<Week> _weekCollection = FirebaseFirestore.instance
       .collection('weeks')
       .withConverter<Week>(
@@ -38,13 +35,16 @@ class WeekController extends ChangeNotifier {
 
   Future<Week> get(BuildContext context,
       {String? startAt, String? endAt}) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) throw Exception('Usuário não autenticado');
+
     if (startAt == null || endAt == null) {
       startAt = AppDateFormat.toSave.format(currentWeek.first);
       endAt = AppDateFormat.toSave.format(currentWeek.last);
     }
 
     var snapshots = await _weekCollection
-        .where('uid', isEqualTo: mockUID)
+        .where('uid', isEqualTo: user.uid)
         .where('start_at', isEqualTo: startAt)
         .where('end_at', isEqualTo: endAt)
         .get();
@@ -52,7 +52,7 @@ class WeekController extends ChangeNotifier {
       _week = snapshots.docs.first.data();
     } else {
       var reference = await _weekCollection
-          .add(Week(uid: mockUID, startAt: startAt, endAt: endAt));
+          .add(Week(uid: user.uid, startAt: startAt, endAt: endAt));
       _week = (await reference.get()).data();
     }
     // ignore: use_build_context_synchronously

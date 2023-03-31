@@ -66,6 +66,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 prefixIcon: const Icon(Icons.person),
                 placeholder: 'Digite o nome',
                 controller: _nameController,
+                onChanged: (value) {
+                  setState(() {});
+                },
                 error: controller.errors.getErrorWithCode('name'),
               ),
               const SizedBox(
@@ -76,6 +79,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 prefixIcon: const Icon(Icons.email),
                 placeholder: 'Digite o seu e-mail',
                 controller: _emailController,
+                onChanged: (value) {
+                  setState(() {});
+                },
                 error: controller.errors.getErrorWithCode('email'),
               ),
               const SizedBox(
@@ -96,6 +102,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 label: 'Senha',
                 placeholder: "Digite a sua senha",
                 controller: _passwordController,
+                onChanged: (value) {
+                  setState(() {});
+                },
                 error: controller.errors.getErrorWithCode('password'),
               ),
               Container(
@@ -103,7 +112,10 @@ class _SignUpPageState extends State<SignUpPage> {
                 height: 48,
                 margin: const EdgeInsets.only(top: 24),
                 child: ElevatedButton(
-                    onPressed: _isLoading
+                    onPressed: _isLoading ||
+                            _nameController.text.isEmpty ||
+                            _emailController.text.isEmpty ||
+                            _passwordController.text.isEmpty
                         ? null
                         : () {
                             setState(() => _isLoading = true);

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daybyday/models/field_error.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,8 @@ class AuthController extends ChangeNotifier {
             FieldError(code: 'email', message: 'E-mail ou senha inválidos'));
         _errors.add(
             FieldError(code: 'password', message: 'E-mail ou senha inválidos'));
+      } else if (e.code == 'invalid-email') {
+        _errors.add(FieldError(code: 'email', message: 'E-mail não é válido'));
       } else if (e.code == 'too-many-requests') {
         _errors.add(FieldError(code: 'general', message: 'Muitas requisições'));
       } else {
@@ -153,6 +156,18 @@ class AuthController extends ChangeNotifier {
       }
       notifyListeners();
       return _errors;
+    }
+  }
+
+  Future<void> deleteAllData() async {
+    if (auth.currentUser == null) throw Exception('Usuário não autenticado');
+    var weekCollection = FirebaseFirestore.instance.collection('weeks');
+    var snapshots = await weekCollection
+        .where('uid', isEqualTo: auth.currentUser!.uid)
+        .get();
+    await auth.currentUser!.delete();
+    for (var element in snapshots.docs) {
+      await weekCollection.doc(element.id).delete();
     }
   }
 }
