@@ -29,7 +29,7 @@ class DayCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                DateFormat('E').format(date),
+                DateFormat('E', 'pt_br').format(date),
                 style: TextStyle(
                     fontSize: 16,
                     color:

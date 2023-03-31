@@ -32,6 +32,7 @@ Future<String?> addTaskBottomSheet(BuildContext context) async {
                           autofocus: true,
                           decoration: const InputDecoration(
                               hintText: "Informe o nome da tarefa"),
+                          textInputAction: TextInputAction.send,
                           validator: (String? value) {
                             if (value == null) {
                               return "Digite o nome da tarefa";
@@ -41,6 +42,11 @@ Future<String?> addTaskBottomSheet(BuildContext context) async {
                             }
 
                             return null;
+                          },
+                          onFieldSubmitted: (String? value) {
+                            if (formGlobalKey.currentState!.validate()) {
+                              Navigator.pop(context, controller.text);
+                            }
                           },
                         ),
                       ),

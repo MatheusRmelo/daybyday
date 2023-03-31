@@ -55,10 +55,10 @@ class WeekController extends ChangeNotifier {
           .add(Week(uid: mockUID, startAt: startAt, endAt: endAt));
       _week = (await reference.get()).data();
     }
+    // ignore: use_build_context_synchronously
+    await context.read<TaskController>().setCollection(_week!);
     _activeDay = week!.initDay;
     notifyListeners();
-    // ignore: use_build_context_synchronously
-    context.read<TaskController>().setCollection(_week!);
     return _week!;
   }
 }

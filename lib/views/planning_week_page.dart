@@ -92,36 +92,61 @@ class _PlanningWeekPageState extends State<PlanningWeekPage> {
                   Expanded(
                     child: ListView.builder(
                         itemCount: taskController.tasks.length,
-                        itemBuilder: ((context, index) => ListTile(
-                              leading: taskController.tasks[index].isComplete
-                                  ? Icon(
-                                      Icons.check_circle,
-                                      color: AppColors.success,
+                        itemBuilder: ((context, index) => Dismissible(
+                              direction: DismissDirection.endToStart,
+                              background: Container(
+                                color: AppColors.error,
+                                padding: EdgeInsets.all(8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Icon(Icons.delete,
+                                        color: AppColors.textLight),
+                                    Text(
+                                      "Excluir tarefa",
+                                      style:
+                                          TextStyle(color: AppColors.textLight),
                                     )
-                                  : Container(
-                                      width: 24,
-                                      height: 24,
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: AppColors.border),
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
-                                    ),
-                              title: Text(taskController.tasks[index].name),
-                              trailing: taskController.tasks[index].day.isEmpty
-                                  ? null
-                                  : Chip(
-                                      label: Text(DateFormat.EEEE().format(
-                                          DateTime.parse(taskController
-                                              .tasks[index].day)))),
+                                  ],
+                                ),
+                              ),
+                              key: Key(
+                                  "task_dismissible_${taskController.tasks[index].id}"),
+                              onDismissed: (DismissDirection direction) {
+                                taskController
+                                    .destroy(taskController.tasks[index]);
+                              },
+                              child: ListTile(
+                                leading: taskController.tasks[index].isComplete
+                                    ? Icon(
+                                        Icons.check_circle,
+                                        color: AppColors.success,
+                                      )
+                                    : Container(
+                                        width: 24,
+                                        height: 24,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: AppColors.border),
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                      ),
+                                title: Text(taskController.tasks[index].name),
+                                trailing:
+                                    taskController.tasks[index].day.isEmpty
+                                        ? null
+                                        : Chip(
+                                            label: Text(DateFormat.EEEE('pt_br')
+                                                .format(DateTime.parse(
+                                                    taskController
+                                                        .tasks[index].day)))),
+                              ),
                             ))),
                   )
                 ],
               ),
         floatingActionButton: FloatingActionButton(
-            backgroundColor: _isBusy
-                ? AppColors.secondary.withOpacity(0.2)
-                : AppColors.secondary,
+            backgroundColor: _isBusy ? Colors.grey : AppColors.secondary,
             onPressed: _isBusy
                 ? null
                 : () async {

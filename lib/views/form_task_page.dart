@@ -98,7 +98,7 @@ class _FormTaskPageState extends State<FormTaskPage> {
                       borderRadius: BorderRadius.circular(32),
                       border: Border.all(color: AppColors.border)),
                   child: Text(
-                    "${_date!.isToday ? 'Today' : DateFormat("EEEE").format(_date!)}, ${DateFormat("d").format(_date!)}",
+                    "${_date!.isToday ? 'Hoje' : DateFormat("EEEE", 'pt_br').format(_date!)}, ${DateFormat("d", 'pt_br').format(_date!)}",
                     style: const TextStyle(
                       fontSize: 16,
                     ),

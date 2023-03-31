@@ -82,7 +82,7 @@ class _ConfigDayPageState extends State<ConfigDayPage> {
                                             ? AppColors.highlight
                                             : null,
                                     label: Text(
-                                      DateFormat.EEEE().format(day),
+                                      DateFormat.EEEE('pt_br').format(day),
                                       style: TextStyle(
                                           color: day.isSameDay(
                                                   taskController.activeDay)
@@ -136,7 +136,7 @@ class _ConfigDayPageState extends State<ConfigDayPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Tarefas da ${DateFormat.EEEE().format(taskController.activeDay)}",
+                    "Tarefas da ${DateFormat.EEEE('pt_br').format(taskController.activeDay)}",
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),

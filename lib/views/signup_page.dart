@@ -160,11 +160,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ? null
                         : () {
                             setState(() => _isLoading = true);
-                            controller
-                                .signInWithEmailAndPassword(
-                                    email: _emailController.text,
-                                    password: _passwordController.text)
-                                .then((value) {
+                            controller.signInWithGoogle().then((value) {
                               if (value.isEmpty) {
                                 Navigator.pushNamedAndRemoveUntil(
                                     context, AppRoutes.home, (route) => false);

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:daybyday/controllers/task_controller.dart';
 import 'package:daybyday/controllers/week_controller.dart';
 import 'package:daybyday/utils/app_colors.dart';
@@ -34,9 +36,11 @@ class _TaskPageState extends State<TaskPage> {
           setState(() => _isLoading = false);
         }
       }).catchError((err) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(ErrorSnackbar(content: Text(err.toString())));
-        setState(() => _isLoading = false);
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(ErrorSnackbar(content: Text(err.toString())));
+          setState(() => _isLoading = false);
+        }
       });
     }
   }
@@ -74,7 +78,7 @@ class _TaskPageState extends State<TaskPage> {
           centerTitle: true,
           title: weekController.week != null
               ? Text(
-                  "${DateFormat("d 'de' MMMM").format(weekController.week!.days.first)} até ${DateFormat("d 'de' MMMM").format(weekController.week!.days.last)}",
+                  "${DateFormat("d 'de' MMMM", 'pt_BR').format(weekController.week!.days.first)} até ${DateFormat("d 'de' MMMM", 'pt_br').format(weekController.week!.days.last)}",
                   style: TextStyle(fontSize: 16, color: AppColors.textNormal),
                 )
               : const Text('Carregando...'),
