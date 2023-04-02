@@ -1,4 +1,4 @@
-package com.example.daybyday
+package com.melotechnology.daybyday
 
 import io.flutter.embedding.android.FlutterActivity
 
