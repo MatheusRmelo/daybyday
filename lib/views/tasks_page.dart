@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:daybyday/controllers/task_controller.dart';
 import 'package:daybyday/controllers/week_controller.dart';
 import 'package:daybyday/utils/app_colors.dart';
@@ -90,65 +88,66 @@ class _TaskPageState extends State<TaskPage> {
                 }),
           ],
         ),
-        body: Padding(
-            padding: const EdgeInsets.all(16),
-            child:
-                Consumer<TaskController>(builder: (context, taskController, _) {
-              if (taskController.tasks.isEmpty) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Você ainda não planejou essa semana",
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 16),
-                      height: 48,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            taskController.task = null;
-                            Navigator.pushNamed(context, AppRoutes.plannigWeek);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  child: const Icon(Icons.add)),
-                              const Text("Planejar semana"),
-                            ],
-                          )),
-                    )
-                  ],
-                );
-              }
+        body: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(16),
+                child: Consumer<TaskController>(
+                    builder: (context, taskController, _) {
+                  if (taskController.tasks.isEmpty) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Você ainda não planejou essa semana",
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 16),
+                          height: 48,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                taskController.task = null;
+                                Navigator.pushNamed(
+                                    context, AppRoutes.plannigWeek);
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      margin: const EdgeInsets.only(right: 8),
+                                      child: const Icon(Icons.add)),
+                                  const Text("Planejar semana"),
+                                ],
+                              )),
+                        )
+                      ],
+                    );
+                  }
 
-              return Column(children: [
-                Container(
-                  height: 100,
-                  margin: const EdgeInsets.only(top: 24, bottom: 16),
-                  child: ListView.builder(
-                    itemCount: weekController.week!.days.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) => DayCard(
-                        onPressed: () {
-                          weekController.activeDay =
-                              weekController.week!.days[index];
-                        },
-                        isActive: weekController.week!.days[index]
-                            .isSameDay(weekController.activeDay),
-                        date: weekController.week!.days[index]),
-                  ),
-                ),
-                Expanded(
-                    child: _isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : taskController.tasks
+                  return Column(children: [
+                    Container(
+                      height: 100,
+                      margin: const EdgeInsets.only(top: 24, bottom: 16),
+                      child: ListView.builder(
+                        itemCount: weekController.week!.days.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) => DayCard(
+                            onPressed: () {
+                              weekController.activeDay =
+                                  weekController.week!.days[index];
+                            },
+                            isActive: weekController.week!.days[index]
+                                .isSameDay(weekController.activeDay),
+                            date: weekController.week!.days[index]),
+                      ),
+                    ),
+                    Expanded(
+                        child: taskController.tasks
                                 .getTasksInDay(weekController.activeDay)
                                 .isEmpty
                             ? Column(
@@ -192,8 +191,8 @@ class _TaskPageState extends State<TaskPage> {
                                       weekController.activeDay)[index],
                                 ),
                               ))
-              ]);
-            })),
+                  ]);
+                })),
       );
     });
   }

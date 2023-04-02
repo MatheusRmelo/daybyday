@@ -61,4 +61,9 @@ class WeekController extends ChangeNotifier {
     notifyListeners();
     return _week!;
   }
+
+  void clean() {
+    _week = null;
+    _activeDay = DateTime.now();
+  }
 }

@@ -1,4 +1,6 @@
 import 'package:daybyday/controllers/auth_controller.dart';
+import 'package:daybyday/controllers/task_controller.dart';
+import 'package:daybyday/controllers/week_controller.dart';
 import 'package:daybyday/utils/app_colors.dart';
 import 'package:daybyday/utils/app_routes.dart';
 import 'package:daybyday/views/widgets/dialogs/delete_dialog.dart';
@@ -122,7 +124,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                           onPressed: () {
-                            FirebaseAuth.instance.signOut();
+                            FirebaseAuth.instance.signOut().then((value) {
+                              context.read<TaskController>().clean();
+                              context.read<WeekController>().clean();
+                            });
                           },
                         ),
                       )

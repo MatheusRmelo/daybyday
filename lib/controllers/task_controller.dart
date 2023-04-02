@@ -104,4 +104,10 @@ class TaskController extends ChangeNotifier {
       await _taskCollection!.doc(tasks[i].id).update({'priority': i});
     }
   }
+
+  void clean() {
+    _tasks = [];
+    task = null;
+    _activeDay = DateTime.now();
+  }
 }
