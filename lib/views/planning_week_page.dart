@@ -96,7 +96,7 @@ class _PlanningWeekPageState extends State<PlanningWeekPage> {
                               direction: DismissDirection.endToStart,
                               background: Container(
                                 color: AppColors.error,
-                                padding: EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(8),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [

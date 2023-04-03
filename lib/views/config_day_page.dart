@@ -158,44 +158,66 @@ class _ConfigDayPageState extends State<ConfigDayPage> {
               Expanded(
                 child: ReorderableListView.builder(
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        key:
-                            Key("task_${taskController.activeTasks[index].id}"),
-                        leading: Container(
-                          width: 88,
-                          child: Row(children: [
-                            CircleIconButton(
-                                margin: EdgeInsets.zero,
-                                icon: Icons.edit,
-                                onPressed: () {
-                                  taskController.task =
-                                      taskController.activeTasks[index];
-                                  Navigator.pushNamed(
-                                      context, AppRoutes.formTask);
-                                }),
-                            CircleIconButton(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 4),
-                                icon: Icons.delete,
-                                onPressed: () {
-                                  showDeleteDialog(context, "Ação crítica",
-                                      "Excluir a tarefa ${taskController.activeTasks[index].name} é uma ação irreversível",
-                                      () {
-                                    taskController.destroy(
-                                        taskController.activeTasks[index]);
-                                  });
-                                })
-                          ]),
+                      return Dismissible(
+                        key: Key(
+                            "task_dismissible_${taskController.tasks[index].id}"),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (DismissDirection direction) {
+                          taskController.destroy(taskController.tasks[index]);
+                        },
+                        background: Container(
+                          color: AppColors.error,
+                          padding: const EdgeInsets.all(8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Icon(Icons.delete, color: AppColors.textLight),
+                              Text(
+                                "Excluir tarefa",
+                                style: TextStyle(color: AppColors.textLight),
+                              )
+                            ],
+                          ),
                         ),
-                        title: Text(
-                          taskController.activeTasks[index].name,
-                          style: TextStyle(
-                              decoration:
-                                  taskController.activeTasks[index].isComplete
-                                      ? TextDecoration.lineThrough
-                                      : TextDecoration.none),
+                        child: ListTile(
+                          key: Key(
+                              "task_${taskController.activeTasks[index].id}"),
+                          leading: Container(
+                            width: 88,
+                            child: Row(children: [
+                              CircleIconButton(
+                                  margin: EdgeInsets.zero,
+                                  icon: Icons.edit,
+                                  onPressed: () {
+                                    taskController.task =
+                                        taskController.activeTasks[index];
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.formTask);
+                                  }),
+                              CircleIconButton(
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  icon: Icons.delete,
+                                  onPressed: () {
+                                    showDeleteDialog(context, "Ação crítica",
+                                        "Excluir a tarefa ${taskController.activeTasks[index].name} é uma ação irreversível",
+                                        () {
+                                      taskController.destroy(
+                                          taskController.activeTasks[index]);
+                                    });
+                                  })
+                            ]),
+                          ),
+                          title: Text(
+                            taskController.activeTasks[index].name,
+                            style: TextStyle(
+                                decoration:
+                                    taskController.activeTasks[index].isComplete
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none),
+                          ),
+                          trailing: const Icon(Icons.menu),
                         ),
-                        trailing: const Icon(Icons.menu),
                       );
                     },
                     itemCount: taskController.activeTasks.length,

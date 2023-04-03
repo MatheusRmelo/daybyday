@@ -183,12 +183,34 @@ class _TaskPageState extends State<TaskPage> {
                                 ],
                               )
                             : ListView.builder(
-                                itemCount: taskController.tasks
-                                    .getTasksInDay(weekController.activeDay)
-                                    .length,
-                                itemBuilder: (context, index) => TaskCard(
-                                  task: taskController.tasks.getTasksInDay(
-                                      weekController.activeDay)[index],
+                                itemCount: taskController.activeTasks.length,
+                                itemBuilder: (context, index) => Dismissible(
+                                  key: Key(
+                                      "task_dismissible_${taskController.tasks[index].id}"),
+                                  direction: DismissDirection.endToStart,
+                                  onDismissed: (DismissDirection direction) {
+                                    taskController
+                                        .destroy(taskController.tasks[index]);
+                                  },
+                                  background: Container(
+                                    color: AppColors.error,
+                                    padding: const EdgeInsets.all(8),
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Icon(Icons.delete,
+                                              color: AppColors.textLight),
+                                          Text(
+                                            "Excluir tarefa",
+                                            style: TextStyle(
+                                                color: AppColors.textLight),
+                                          )
+                                        ]),
+                                  ),
+                                  child: TaskCard(
+                                    task: taskController.activeTasks[index],
+                                  ),
                                 ),
                               ))
                   ]);

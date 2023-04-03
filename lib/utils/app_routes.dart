@@ -3,6 +3,7 @@ class AppRoutes {
   static String home = '/home';
   static String signIn = '/sign_in';
   static String signUp = '/sign_up';
+  static String checkVerificationEmail = '/check_verification_email';
   static String recoveryPassword = '/recovery_password';
   static String formTask = '/form_task';
   static String configDay = '/config_day';

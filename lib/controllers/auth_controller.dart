@@ -14,25 +14,31 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<User> reloadUser() async {
+    if (auth.currentUser == null) throw Exception('Usuário não autenticado');
+    await auth.currentUser!.reload();
+    return auth.currentUser!;
+  }
+
+  Future<bool> sendVerificationEmail() async {
+    if (auth.currentUser == null) throw Exception('Usuário não autenticado');
+    if (auth.currentUser!.emailVerified) {
+      throw Exception('E-mail já verificado');
+    }
+    await auth.currentUser!.sendEmailVerification();
+    return true;
+  }
+
   Future<List<FieldError>> signInWithEmailAndPassword(
       {required String email, required String password}) async {
     _errors = [];
     notifyListeners();
     try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+      var userCredential = await auth.signInWithEmailAndPassword(
           email: email, password: password);
-      if (!userCredential.user!.emailVerified) {
+      if (userCredential.user != null && !userCredential.user!.emailVerified) {
         await userCredential.user!.sendEmailVerification();
-        await auth.signOut();
-
-        return [
-          FieldError(
-              code: 'general',
-              message:
-                  'Uma e-mail de verificação foi enviado para seu endereço de e-mail')
-        ];
       }
-
       return [];
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -70,13 +76,6 @@ class AuthController extends ChangeNotifier {
         await userCredential.user!.updateDisplayName(name);
         if (!userCredential.user!.emailVerified) {
           await userCredential.user!.sendEmailVerification();
-          await auth.signOut();
-          return [
-            FieldError(
-                code: 'general',
-                message:
-                    'Uma e-mail de verificação foi enviado para seu endereço de e-mail')
-          ];
         }
       }
       return [];
@@ -165,9 +164,9 @@ class AuthController extends ChangeNotifier {
     var snapshots = await weekCollection
         .where('uid', isEqualTo: auth.currentUser!.uid)
         .get();
-    await auth.currentUser!.delete();
     for (var element in snapshots.docs) {
       await weekCollection.doc(element.id).delete();
     }
+    await auth.currentUser!.delete();
   }
 }

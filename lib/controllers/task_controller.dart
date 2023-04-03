@@ -52,6 +52,7 @@ class TaskController extends ChangeNotifier {
     if (_taskCollection == null) return;
     var snapshots = await _taskCollection!.get();
     _tasks = snapshots.docs.map((e) => e.data()).toList();
+    _activeTasks = _tasks.getTasksInDay(_activeDay);
     notifyListeners();
   }
 

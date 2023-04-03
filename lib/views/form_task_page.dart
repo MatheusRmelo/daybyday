@@ -37,7 +37,7 @@ class _FormTaskPageState extends State<FormTaskPage> {
       if (index == -1) {
         _date = controller.week!.days.first;
       } else {
-        _date = DateTime.now();
+        _date = controller.activeDay;
       }
     }
   }

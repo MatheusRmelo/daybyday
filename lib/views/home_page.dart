@@ -25,6 +25,9 @@ class _HomePageState extends State<HomePage> {
           Navigator.pushNamedAndRemoveUntil(
               context, AppRoutes.signIn, (route) => false);
         }
+      } else if (!user.emailVerified) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, AppRoutes.checkVerificationEmail, (route) => false);
       }
     });
   }
